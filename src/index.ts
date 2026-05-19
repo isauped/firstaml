@@ -1,8 +1,10 @@
 export { priceOrder } from './pricing';
 export { ValidationError } from './errors';
-export { PARCEL_SIZE } from './types';
+export { ORDER_ADDON, PARCEL_SIZE } from './types';
 export type {
+  LineItemType,
   Order,
+  OrderAddon,
   OrderPricingResult,
   Parcel,
   ParcelSize,

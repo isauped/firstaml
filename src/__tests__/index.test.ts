@@ -1,4 +1,9 @@
-import { PARCEL_SIZE, priceOrder, ValidationError } from '../index';
+import {
+  ORDER_ADDON,
+  PARCEL_SIZE,
+  priceOrder,
+  ValidationError,
+} from '../index';
 
 describe('public surface', () => {
   it('exports priceOrder', () => {
@@ -18,6 +23,12 @@ describe('public surface', () => {
       MEDIUM: 'MEDIUM',
       LARGE: 'LARGE',
       XL: 'XL',
+    });
+  });
+
+  it('exports ORDER_ADDON with SPEEDY_SHIPPING', () => {
+    expect(ORDER_ADDON).toEqual({
+      SPEEDY_SHIPPING: 'SPEEDY_SHIPPING',
     });
   });
 });

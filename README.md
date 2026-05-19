@@ -76,6 +76,20 @@ _Document any assumptions made about the problem domain, input formats, edge cas
   - dimensions must be greater than zero
 - Invalid input should throw a clear validation error.
 
+## Step 2 Assumptions
+
+- Speedy shipping is an optional order-level pricing option.
+- Speedy shipping is enabled through `speedyShipping?: boolean` on the order input.
+- Speedy shipping is represented by an order-level line item type, not a parcel size.
+- Speedy shipping does not participate in parcel classification logic.
+- Parcel pricing is calculated first.
+- Speedy shipping cost is calculated from the parcel subtotal.
+- Speedy shipping cost is equal to the parcel subtotal, which means the final order total is doubled.
+- Speedy shipping appears as a separate line item in the output.
+- Speedy shipping does not modify individual parcel line item costs.
+- If `speedyShipping` is omitted or `false`, no speedy shipping line item is added.
+- The final order total is calculated from all line items after the optional speedy shipping line item is added.
+
 ## Architectural Notes
 
 _Document key design decisions, trade-offs, and rationale here._

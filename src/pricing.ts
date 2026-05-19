@@ -1,5 +1,5 @@
 import { ValidationError } from './errors';
-import { PARCEL_SIZE } from './types';
+import { ORDER_ADDON, PARCEL_SIZE } from './types';
 import type {
   Order,
   OrderPricingResult,
@@ -22,10 +22,22 @@ const PARCEL_PRICES: Record<ParcelSize, number> = {
 export function priceOrder(order: Order): OrderPricingResult {
   validateOrder(order);
 
-  const lineItems: PricedLineItem[] = order.parcels.map((parcel) => {
+  const parcelLineItems: PricedLineItem[] = order.parcels.map((parcel) => {
     const size = classifyParcel(parcel);
     return { type: size, cost: PARCEL_PRICES[size] };
   });
+
+  const parcelSubtotal = parcelLineItems.reduce(
+    (sum, item) => sum + item.cost,
+    0,
+  );
+
+  const lineItems: PricedLineItem[] = order.speedyShipping
+    ? [
+        ...parcelLineItems,
+        { type: ORDER_ADDON.SPEEDY_SHIPPING, cost: parcelSubtotal },
+      ]
+    : parcelLineItems;
 
   const total = lineItems.reduce((sum, item) => sum + item.cost, 0);
 
