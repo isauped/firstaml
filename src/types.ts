@@ -13,7 +13,14 @@ export const ORDER_ADDON = {
 
 export type OrderAddon = (typeof ORDER_ADDON)[keyof typeof ORDER_ADDON];
 
-export type LineItemType = ParcelSize | OrderAddon;
+export const PARCEL_RATE_TYPE = {
+  HEAVY: 'HEAVY',
+} as const;
+
+export type ParcelRateType =
+  (typeof PARCEL_RATE_TYPE)[keyof typeof PARCEL_RATE_TYPE];
+
+export type LineItemType = ParcelSize | ParcelRateType | OrderAddon;
 
 export interface Parcel {
   dimensions: number[];

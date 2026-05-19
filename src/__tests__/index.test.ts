@@ -1,5 +1,6 @@
 import {
   ORDER_ADDON,
+  PARCEL_RATE_TYPE,
   PARCEL_SIZE,
   priceOrder,
   ValidationError,
@@ -29,6 +30,12 @@ describe('public surface', () => {
   it('exports ORDER_ADDON with SPEEDY_SHIPPING', () => {
     expect(ORDER_ADDON).toEqual({
       SPEEDY_SHIPPING: 'SPEEDY_SHIPPING',
+    });
+  });
+
+  it('exports PARCEL_RATE_TYPE with HEAVY', () => {
+    expect(PARCEL_RATE_TYPE).toEqual({
+      HEAVY: 'HEAVY',
     });
   });
 });

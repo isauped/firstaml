@@ -1,5 +1,5 @@
 import { ValidationError } from './errors';
-import { ORDER_ADDON, PARCEL_SIZE } from './types';
+import { ORDER_ADDON, PARCEL_RATE_TYPE, PARCEL_SIZE } from './types';
 import type {
   Order,
   OrderPricingResult,
@@ -28,13 +28,23 @@ const PARCEL_WEIGHT_LIMITS_KG: Record<ParcelSize, number> = {
 
 const OVERWEIGHT_RATE_PER_KG = 2;
 
+const HEAVY_BASE_PRICE = 50;
+const HEAVY_BASE_WEIGHT_LIMIT_KG = 50;
+const HEAVY_OVER_RATE_PER_KG = 1;
+
 export function priceOrder(order: Order): OrderPricingResult {
   validateOrder(order);
 
   const parcelLineItems: PricedLineItem[] = order.parcels.map((parcel) => {
     const size = classifyParcel(parcel);
-    const cost = PARCEL_PRICES[size] + overweightCharge(parcel.weight, size);
-    return { type: size, cost };
+    const normalCost =
+      PARCEL_PRICES[size] + overweightCharge(parcel.weight, size);
+    const heavyCost = heavyParcelPrice(parcel.weight);
+
+    if (heavyCost < normalCost) {
+      return { type: PARCEL_RATE_TYPE.HEAVY, cost: heavyCost };
+    }
+    return { type: size, cost: normalCost };
   });
 
   const parcelSubtotal = parcelLineItems.reduce(
@@ -66,6 +76,11 @@ function classifyParcel(parcel: Parcel): ParcelSize {
 function overweightCharge(weightKg: number, size: ParcelSize): number {
   const excess = Math.max(0, weightKg - PARCEL_WEIGHT_LIMITS_KG[size]);
   return Math.ceil(excess) * OVERWEIGHT_RATE_PER_KG;
+}
+
+function heavyParcelPrice(weightKg: number): number {
+  const excess = Math.max(0, weightKg - HEAVY_BASE_WEIGHT_LIMIT_KG);
+  return HEAVY_BASE_PRICE + Math.ceil(excess) * HEAVY_OVER_RATE_PER_KG;
 }
 
 function validateOrder(order: Order): void {

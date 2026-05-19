@@ -112,6 +112,25 @@ _Document any assumptions made about the problem domain, input formats, edge cas
 - Existing parcel pricing and parcel classification behaviour should remain unchanged unless affected by overweight rules.
 - Invalid weight input should throw a clear validation error.
 
+## Step 4 Assumptions
+
+- Heavy is a new parcel type.
+- Heavy parcel pricing is determined by weight only.
+- Heavy parcel costs:
+  - $50 up to and including 50kg
+  - plus $1 per kg over 50kg
+- Partial kilograms over 50kg are rounded up to the next whole kilogram.
+- Existing parcel types and overweight rules from Step 3 remain unchanged.
+- For each parcel, the library should select the cheapest valid pricing option.
+- Heavy parcel pricing should be compared against the existing dimension-based parcel pricing after overweight charges are applied.
+- A parcel can qualify for Heavy pricing regardless of its dimensions.
+- If Heavy pricing is selected, the parcel line item type should be `Heavy`.
+- Parcel line item cost should represent the final selected parcel pricing option.
+- Heavy pricing should not appear as a separate adjustment line item.
+- Speedy shipping, if selected, is calculated after the final parcel pricing option is selected.
+- Existing validation rules for dimensions and weight still apply.
+- Invalid input should continue to throw clear validation errors.
+
 ## Architectural Notes
 
 _Document key design decisions, trade-offs, and rationale here._
