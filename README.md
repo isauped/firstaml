@@ -99,10 +99,10 @@ Validation is handwritten rather than schema-driven. The input surface is small 
 ## Testing
 
 - `jest` with `ts-jest` for TypeScript support.
-- Two suites:
+- Test layout:
   - `src/__tests__/index.test.ts` — public export surface.
-  - `src/__tests__/pricing.test.ts` — pricing behaviour.
-- Tests are organised by feature using nested `describe` blocks with `green paths`, `boundary cases`, and `red paths` sub-blocks.
+  - `src/__tests__/pricing/` — pricing behaviour split per feature: `base.test.ts`, `speedy-shipping.test.ts`, `overweight.test.ts`, `heavy.test.ts`, and `validation.test.ts` (cross-cutting validation contract).
+- Within each file, tests are grouped under `describe` blocks named after what is being verified — `valid orders`, `exact thresholds`, and `invalid input` for feature files; `order-level`, `dimension-level`, and `weight-level` for validation.
 - Coverage threshold is 80% line coverage; current coverage is 100% across `errors.ts`, `index.ts`, `pricing.ts`, and `types.ts`.
 
 ## Assumptions
@@ -186,8 +186,13 @@ Validation is handwritten rather than schema-driven. The input surface is small 
 - Existing validation rules for dimensions and weight still apply.
 - Invalid input should continue to throw clear validation errors.
 
+## Step 5
+
+Step 5 was not completed due to time constraints.
+
 ## Tradeoffs / Design Decisions
 
+- **Implemented in TypeScript rather than C#.** C# is the preferred language for the role, but I'm more fluent in TypeScript. Within the time limit, working in the language I know best let me cover more of the brief than the learning-curve overhead in C# would have allowed.
 - **Three string-literal registries instead of one.** `PARCEL_SIZE` (dimension classification), `PARCEL_RATE_TYPE` (alternative pricing schemes, currently just HEAVY), and `ORDER_ADDON` (order-level line items, currently just SPEEDY_SHIPPING) model genuinely different concepts. Folding them into one would force `classifyParcel()` to claim it can return HEAVY (it cannot) and `PARCEL_PRICES` to claim it holds a fixed Heavy price (it does not).
 - **Heavy selection uses strict less-than.** When the Heavy cost equals the dimension-based cost, the dimension-based label wins. The brief is silent on ties; keeping the natural label unless Heavy is *strictly* cheaper is the less surprising default.
 - **Overweight surcharge folds into the parcel line item's `cost`** rather than appearing as a separate line item. Matches the Step 3 brief and keeps the output shape unchanged from Step 1.
@@ -196,7 +201,7 @@ Validation is handwritten rather than schema-driven. The input surface is small 
 
 ## Future Improvements
 
-- Replace the numeric `cost` with a typed `Money` value carrying currency, so the library is not silently USD-coupled.
+- Replace the numeric `cost` with a typed `Money` value carrying currency, so the library is not silently NZD-coupled.
 - Surface a cost breakdown (base / overweight / heavy / speedy) on each line item for consumers that need transparency without inspecting `type`.
 - Move pricing tables (sizes, weight limits, rates) into configuration to support per-region tariffs.
 - Adopt a schema-based validator (e.g. zod) if the input contract grows beyond the current handful of fields.

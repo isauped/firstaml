@@ -1,7 +1,7 @@
 {
   "name": "firstaml",
   "version": "0.1.0",
-  "description": "AML screening library",
+  "description": "Parcel pricing library for the First AML technical test.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
