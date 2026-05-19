@@ -200,8 +200,9 @@ Step 5 was not completed due to time constraints.
 - **`validateDimension` and `validateWeight` repeat the "finite positive number" predicate** instead of sharing a helper. The two failure messages must remain distinct (`"...must be a finite number"` vs `"...must be greater than zero"`) and existing tests assert on the exact text. Two small near-duplicate validators is the lesser evil.
 
 ## Future Improvements
-
+- Implement Step 5.
+- Use an automated PR review tool, such as CodeRabbit or Cursor Bot, to review the changes and highlight potential issues before submission.
+- Adopt a schema-based validator (e.g. zod) if the input contract grows beyond the current handful of fields.
 - Replace the numeric `cost` with a typed `Money` value carrying currency, so the library is not silently NZD-coupled.
 - Surface a cost breakdown (base / overweight / heavy / speedy) on each line item for consumers that need transparency without inspecting `type`.
 - Move pricing tables (sizes, weight limits, rates) into configuration to support per-region tariffs.
-- Adopt a schema-based validator (e.g. zod) if the input contract grows beyond the current handful of fields.
