@@ -19,12 +19,22 @@ const PARCEL_PRICES: Record<ParcelSize, number> = {
   XL: 25,
 };
 
+const PARCEL_WEIGHT_LIMITS_KG: Record<ParcelSize, number> = {
+  SMALL: 1,
+  MEDIUM: 3,
+  LARGE: 6,
+  XL: 10,
+};
+
+const OVERWEIGHT_RATE_PER_KG = 2;
+
 export function priceOrder(order: Order): OrderPricingResult {
   validateOrder(order);
 
   const parcelLineItems: PricedLineItem[] = order.parcels.map((parcel) => {
     const size = classifyParcel(parcel);
-    return { type: size, cost: PARCEL_PRICES[size] };
+    const cost = PARCEL_PRICES[size] + overweightCharge(parcel.weight, size);
+    return { type: size, cost };
   });
 
   const parcelSubtotal = parcelLineItems.reduce(
@@ -53,6 +63,11 @@ function classifyParcel(parcel: Parcel): ParcelSize {
   return PARCEL_SIZE.XL;
 }
 
+function overweightCharge(weightKg: number, size: ParcelSize): number {
+  const excess = Math.max(0, weightKg - PARCEL_WEIGHT_LIMITS_KG[size]);
+  return Math.ceil(excess) * OVERWEIGHT_RATE_PER_KG;
+}
+
 function validateOrder(order: Order): void {
   if (order.parcels.length === 0) {
     throw new ValidationError('Order must contain at least one parcel');
@@ -73,6 +88,8 @@ function validateParcel(parcel: Parcel, parcelIndex: number): void {
   parcel.dimensions.forEach((dimension, dimensionIndex) => {
     validateDimension(dimension, parcelIndex, dimensionIndex);
   });
+
+  validateWeight(parcel.weight, parcelIndex);
 }
 
 function validateDimension(
@@ -89,6 +106,20 @@ function validateDimension(
   if (dimension <= 0) {
     throw new ValidationError(
       `Parcel at index ${String(parcelIndex)} has invalid dimension at index ${String(dimensionIndex)}: must be greater than zero`,
+    );
+  }
+}
+
+function validateWeight(weight: number, parcelIndex: number): void {
+  if (typeof weight !== 'number' || !Number.isFinite(weight)) {
+    throw new ValidationError(
+      `Parcel at index ${String(parcelIndex)} has invalid weight: must be a finite number`,
+    );
+  }
+
+  if (weight <= 0) {
+    throw new ValidationError(
+      `Parcel at index ${String(parcelIndex)} has invalid weight: must be greater than zero`,
     );
   }
 }

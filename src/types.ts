@@ -17,6 +17,7 @@ export type LineItemType = ParcelSize | OrderAddon;
 
 export interface Parcel {
   dimensions: number[];
+  weight: number;
 }
 
 export interface Order {

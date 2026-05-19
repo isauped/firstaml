@@ -1,6 +1,6 @@
 # First AML
 
-A TypeScript library for AML (Anti-Money Laundering) screening.
+A TypeScript library for calculating shipping costs
 
 ## Setup
 
@@ -89,6 +89,28 @@ _Document any assumptions made about the problem domain, input formats, edge cas
 - Speedy shipping does not modify individual parcel line item costs.
 - If `speedyShipping` is omitted or `false`, no speedy shipping line item is added.
 - The final order total is calculated from all line items after the optional speedy shipping line item is added.
+
+## Step 3 Assumptions
+
+- Each parcel now requires a `weight` property.
+- Weight is provided in kilograms.
+- Weight must be a positive finite number.
+- Adding required `weight` is considered an intentional input contract change introduced by Step 3.
+- Parcel type is still determined by dimensions only.
+- Weight limits are evaluated after parcel type classification.
+- Weight limits are inclusive:
+  - Small parcel: up to and including 1kg
+  - Medium parcel: up to and including 3kg
+  - Large parcel: up to and including 6kg
+  - XL parcel: up to and including 10kg
+- Overweight charges apply only to the weight above the parcel type limit.
+- Partial kilograms over the limit are rounded up to the next whole kilogram.
+- Overweight charge is $2 per kg over the limit.
+- Overweight charges are added directly to the parcel line item cost.
+- Overweight charges are not represented as separate line items.
+- Speedy shipping, if selected, is calculated after parcel line items include overweight charges.
+- Existing parcel pricing and parcel classification behaviour should remain unchanged unless affected by overweight rules.
+- Invalid weight input should throw a clear validation error.
 
 ## Architectural Notes
 
